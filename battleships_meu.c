@@ -20,8 +20,11 @@ int main()
     char* buff = (char*)malloc(sizeof(char) * 100);
     scanf("%s", cheie);
     while(scanf("%s", buff) == 1 &&  strcmp(buff, "Q") != 0)
-    {
-        int jucatorStatistici = (buff[0] == 'T');
+    {   
+        int jucatorStatistici;
+        if(buff[0] == 'O')
+             jucatorStatistici = 0;
+        else jucatorStatistici = 1;
         char tip1 = buff[1];
         char idxMeci[4];
         idxMeci[0] = buff[2];
@@ -43,14 +46,14 @@ int main()
             if(idMeci >= nrMeciuri)
                 printf("Nu exista date pentru meciul cerut.\n");
             else 
-            { 
+            {  
                 if(tip2[1] == 'A')
-                    rez = floor((float)(jocuri[idMeci]->lovituriTotale[jucatorStatistici]) * (1 - target/100));
-                else rez = fmax(0, floor((float)(jocuri[idMeci]->lovituriTotale[jucatorStatistici]) * (target)/100)) - jocuri[idMeci]->lovituriNimerite[jucatorStatistici];
-                float acurateteMeci = (float)jocuri[idMeci]->lovituriNimerite[jucatorStatistici]/jocuri[idMeci]->lovituriTotale[jucatorStatistici];
-                if(rez < 0)
+                    rez = jocuri[idMeci]->lovituriNimerite[jucatorStatistici] - ceil((float)(jocuri[idMeci]->lovituriTotale[jucatorStatistici]) * (target)/100);
+                else rez = fmax(0, ceil((float)(jocuri[idMeci]->lovituriTotale[jucatorStatistici]) * (target)/100)) - jocuri[idMeci]->lovituriNimerite[jucatorStatistici];
+                if(rez < 0)    
                     rez = 0;
-                printf("%06.2f.%d %d\n", acurateteMeci * 100, rez, rez);
+                float procent = (int)(jocuri[idMeci]->acc_joc[jucatorStatistici] * 10000)/100.0;
+                printf("%06.2f.%d\n", procent, rez);
             }
         }
         else if(tip1 == 'T')
@@ -61,25 +64,25 @@ int main()
             int rez;
             for(int i = 0; i < nrMeciuri; i++)
             { 
-                sumaPonderata += (float) jocuri[i]->lovituriNimerite[jucatorStatistici]/jocuri[i]->lovituriTotale[jucatorStatistici] * jocuri[i]->nrNave;
+                sumaPonderata += jocuri[i]->acc_joc[jucatorStatistici] * jocuri[i]->nrNave; 
                 sumaPonderi += jocuri[i]->nrNave;
             }
-            if(tip2[1] == 'A')
+            if(tip2[1] == 'I')
             {
                 numarator = (float) target/100 * sumaPonderi - sumaPonderata;
-                numitor = (float) sumaPonderi/nrMeciuri * (1 - (target)/100);
+                numitor = (float) sumaPonderi/nrMeciuri * (1 - ((float)target)/100);
                 rez = (int)ceil(numarator/numitor);
             }
             else 
             { 
-                numarator = (float) sumaPonderata/(target/100) - sumaPonderi;
+                numarator = (float) sumaPonderata/((float)target/100) - sumaPonderi;
                 numitor = (float) sumaPonderi/nrMeciuri;
                 rez = (int)floor(numarator/numitor);
             }
             float accTotala = sumaPonderata/sumaPonderi;
             if(rez < 0)
                 rez = 0;
-            printf("%06.2f.%d\n", accTotala * 100, rez);
+            printf("%06.2f.%d\n", (int)(accTotala * 10000)/100.0, rez);
         }
     }
     free(cheie);

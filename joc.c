@@ -56,7 +56,7 @@ Joc* ruleaza_joc()
             int xAtac, yAtac;
             if(scanf("%d %d", &xAtac, &yAtac) != 2)
                 break;
-            jocCurent->lovituriTotale[JucatorLaRand]++6;
+            jocCurent->lovituriTotale[JucatorLaRand]++;
             loveste_nava(tableJoc[!JucatorLaRand], xAtac, yAtac, (JucatorLaRand) + 1, jocCurent);
             if(tableJoc[!JucatorLaRand]->naveExistente == 0)
             { 
@@ -68,6 +68,8 @@ Joc* ruleaza_joc()
         delete_tabla(tableJoc[0]);
         delete_tabla(tableJoc[1]);
         free(tableJoc);
+        jocCurent->acc_joc[0] = (float)jocCurent->lovituriNimerite[0]/jocCurent->lovituriTotale[0];
+        jocCurent->acc_joc[1] = (float)jocCurent->lovituriNimerite[1]/jocCurent->lovituriTotale[1];
         return jocCurent;
 }
 
