@@ -1,8 +1,9 @@
-#ifndef COMENZI
+ #ifndef COMENZI
 #define COMENZI
 #include "lege.h"
+#include "runic.h"
 #include <stdio.h>
 
-int lsystem(FILE* input, Lege** legi);
-char* derive(int nrDerivari, Lege* legi, char norma);
+void lsystem(Runic* program, char fisierInput[100]);
+void derive(int nrDerivari, Runic* program);
 #endif
