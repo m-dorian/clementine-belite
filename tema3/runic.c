@@ -8,6 +8,7 @@ Runic* creeaza_program()
     r->input = NULL;
     r->legi = NULL;
     r->nrLegi = 0;
+    r->imag.pixeli = NULL;
     return r;
 }
 

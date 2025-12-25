@@ -51,21 +51,20 @@ void lsystem(Runic* program, char fisierInput[100])
     return;
 }
 
-void derive(int nrDerivari, Runic* program)
-{ 
-    if(nrDerivari == 0)
-    {
-        printf("%s\n", program->axioma);
-        return;
-    }
+char* derive(int nrDerivari, Runic* program)
+{   
+    char* str = (char*)malloc(sizeof(char) * 100);
+    str[0] = '\0';
     if(program->input == NULL)
     { 
-        printf("No L-system loaded\n");
-        return;
+        strcpy(str, "No L-system loaded");
+        return str;
     }
-    char* str = (char*)malloc(sizeof(char) * (strlen(program->axioma) + 1));
-    str[0] = '\0';
     strcpy(str, program->axioma);
+    if(nrDerivari == 0)
+    { 
+        return str;
+    }
     int currLen = strlen(str);
     int capacitate = currLen * 2;
     for(int i = 0; i < nrDerivari; i++)
@@ -102,15 +101,14 @@ void derive(int nrDerivari, Runic* program)
                 len++;
             
         }
+    }
         temp[len] = '\0';
         free(str);
         str = temp;
         currLen = len;
+    
     }
-    printf("%s\n", str);
-    free(str);
-    return;
-    }
+    return str;
 }
 
 
@@ -161,6 +159,22 @@ void save(Runic* program, char numeImagine[100])
     }
     fclose(fptr);
     return;
+}
+
+void turtle(Runic* program, int xInit, int yInit, int pasDeplasare, int orientare, int pasUnghiular, int nrDerivari, int r, int g, int b)
+{ 
+    if(program->nrLegi == 0)
+    { 
+        printf("No L-system loaded\n");
+        return;
+    }
+    if(program->imag.pixeli == NULL)
+    { 
+        printf("No image loaded\n");
+        return;
+    }
+    char* deriv = derive(nrDerivari, program);
+    
 }
 
 void undo(Runic* program)

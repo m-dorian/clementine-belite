@@ -24,7 +24,9 @@ int main()
         { 
             cuv = strtok(NULL, " ");
             int nrDerivari = strtol(cuv, NULL, 10);
-            derive(nrDerivari, program);
+            char* res = derive(nrDerivari, program);
+            printf("%s\n", res);
+            free(res);
         }
         else if(strcmp(cuv, "LOAD") == 0)
         { 
@@ -35,6 +37,30 @@ int main()
         { 
             cuv = strtok(NULL, " ");
             save(program, cuv);
+        }
+        else if(strcmp(cuv, "TURTLE") == 0)
+        { 
+            cuv = strtok(NULL, " ");
+            int xInit = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int yInit = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int pasDeplasare = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int orientare = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int pasUnghiular = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int nrDerivari = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int r = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int g = strtol(cuv, NULL, 10);
+            cuv = strtok(NULL, " ");
+            int b = strtol(cuv, NULL, 10);
+            turtle(program, xInit, yInit, pasDeplasare, orientare, pasUnghiular, nrDerivari, r, g, b);
+            //Nu stiu sa scriu cod
+            
         }
         else if(strcmp(cuv, "EXIT") == 0)
         {
