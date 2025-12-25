@@ -2,7 +2,7 @@
 
 # Compiler setup.
 CC=gcc
-CFLAGS=-Wall -Wextra -std=c99 -I.
+CFLAGS=-Wall -Wextra -std=c99 -I. -g
 
 # Define targets, e.g., ninel, codeinvim, vectsecv, nomogram.
 TARGETS=runic
