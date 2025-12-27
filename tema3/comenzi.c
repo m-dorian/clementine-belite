@@ -2,6 +2,7 @@
 #include "imagine.h"
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 void lsystem(Runic* program, char fisierInput[100])
 { 
     FILE* f = fopen(fisierInput, "r");
@@ -62,10 +63,10 @@ char* derive(int nrDerivari, Runic* program)
         return str;
     }
     int currLen = strlen(str);
-    int capacitate = currLen * 2;
+    unsigned capacitate = currLen * 2;
     for(int i = 0; i < nrDerivari; i++)
     {   
-        int len = 0;
+        unsigned len = 0;
         char* temp = (char*)malloc(sizeof(char) * capacitate);
         temp[0] = '\0';
         for(int j = 0; j < currLen; j++)
@@ -118,7 +119,7 @@ void load(Runic* program, char numeImagine[100])
     }
     char buff[3];
     fscanf(fptr, "%s", buff);
-    fscanf(fptr, "%d %d", &program->imag.nrRanduri, &program->imag.nrColoane);
+    fscanf(fptr, "%d %d", &program->imag.nrColoane, &program->imag.nrRanduri);
     fscanf(fptr, "%d", &program->imag.maxVal);
     fgetc(fptr);
     program->imag.pixeli = (Pixel**)malloc(sizeof(Pixel*) * program->imag.nrRanduri);
@@ -141,9 +142,14 @@ void load(Runic* program, char numeImagine[100])
 }
 
 void save(Runic* program, char numeImagine[100])
-{ 
+{   
+    if(program->imag.pixeli == NULL)
+    { 
+        printf("No image loaded\n");
+        return;
+    }
     FILE* fptr = fopen(numeImagine, "wb");
-    fprintf(fptr, "P6\n%d %d\n%d\n", program->imag.nrRanduri, program->imag.nrColoane, program->imag.maxVal);
+    fprintf(fptr, "P6\n%d %d\n%d\n", program->imag.nrColoane, program->imag.nrRanduri, program->imag.maxVal);
     for(int i = 0; i < program->imag.nrRanduri; i++)
     { 
         for(int j = 0; j < program->imag.nrColoane; j++)
@@ -154,12 +160,51 @@ void save(Runic* program, char numeImagine[100])
         }
     }
     fclose(fptr);
+    printf("Saved %s\n", numeImagine);
     return;
 }
 
+void deseneaza_pixel(Runic* program, int x, int y, int r, int g, int b)
+{   
+    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].r = r;
+    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].g = g;
+    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].b = b;
+}
+void deseneaza_linie(Runic* program, int x0, int y0, int x1, int y1, int r, int g, int b)
+{ 
+    int dx = abs(x1 - x0);
+    int sx;
+    if(x0 < x1)
+        sx = 1;
+    else sx = -1;
+    int dy = -1 * abs(y1 - y0);
+    int sy;
+    if(y0 < y1)
+         sy = 1;
+    else sy = -1;
+    int err = dx + dy;
+    while(1)
+    { 
+        deseneaza_pixel(program, x0, y0, r, g, b);
+        if(x0 == x1 && y0 == y1)
+            break;
+        int e2 = 2 * err;
+        if(e2 >= dy)
+        { 
+            err = err + dy;
+            x0 = x0 + sx;
+        }
+        if(e2 <= dx)
+        { 
+            err = err + dx;
+            y0 = y0 + sy;
+        }
+    }
+    return;
+}
 void turtle(Runic* program, int xInit, int yInit, int pasDeplasare, int orientare, int pasUnghiular, int nrDerivari, int r, int g, int b)
 { 
-    if(program->nrLegi == 0)
+    if(program->legi == NULL)
     { 
         printf("No L-system loaded\n");
         return;
@@ -170,7 +215,51 @@ void turtle(Runic* program, int xInit, int yInit, int pasDeplasare, int orientar
         return;
     }
     char* derivare = derive(nrDerivari, program);
-    
+    int len = strlen(derivare);
+    StareTestoasa stareCurenta = {(double)xInit, (double)yInit, (double)orientare};
+    StareTestoasa stackStari[100];
+    int topStack = -1;
+    for(int i = 0; i < len; i++)
+    { 
+        switch(derivare[i])
+        { 
+            case 'F':
+            { 
+                double xNou = (double)stareCurenta.x + (double)pasDeplasare * cos(stareCurenta.orientare * (acos(-1)/180.0));
+                double yNou = (double)stareCurenta.y + (double)pasDeplasare * sin(stareCurenta.orientare * (acos(-1)/180.0));
+                deseneaza_linie(program, (int)stareCurenta.x, (int)stareCurenta.y, (int)xNou, (int)yNou, r, g, b);
+                stareCurenta.x = xNou;
+                stareCurenta.y = yNou;
+                break;
+            }
+            case '+':
+            { 
+                stareCurenta.orientare += pasUnghiular;
+                break;
+            }
+            case '-':
+            { 
+                stareCurenta.orientare -= pasUnghiular;
+                break;
+            }
+            case '[':
+            { 
+                stackStari[++topStack] = stareCurenta;
+                break;
+            }
+            case ']':
+            {
+                 stareCurenta = stackStari[topStack];
+                 topStack--;
+                 break;
+            }
+            default:
+            break;
+        }
+    }
+    free(derivare);
+    printf("Drawing done\n");
+    return;
 }
 
 void undo(Runic* program)

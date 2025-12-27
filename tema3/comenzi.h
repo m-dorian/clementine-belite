@@ -4,6 +4,10 @@
 #include "runic.h"
 #include <stdio.h>
 
+typedef struct stare_testoasa { 
+    double x, y, orientare;
+} StareTestoasa;
+
 void lsystem(Runic* program, char fisierInput[100]);
 char* derive(int nrDerivari, Runic* program);
 void load(Runic* program, char numeImagine[100]);
