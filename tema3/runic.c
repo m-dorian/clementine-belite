@@ -5,7 +5,6 @@
 Runic* creeaza_program()
 {
     Runic* r = (Runic*)malloc(sizeof(Runic));
-    r->input = NULL;
     r->legi = NULL;
     r->nrLegi = 0;
     r->imag.pixeli = NULL;
@@ -13,27 +12,29 @@ Runic* creeaza_program()
 }
 
 void sterge_program(Runic* p)
-{ 
-    if(p->input != NULL)
+{   
+    if(p->legi != NULL)
+    { 
+        for(int i = 0; i < p->nrLegi; i++)
+        { 
+            free(p->legi[i]);
+        }
+        free(p->legi);
+    }
+    if(p->imag.pixeli != NULL)
     {
-        fclose(p->input);
+        for(int i = 0; i < p->imag.nrRanduri; i++)
+        { 
+            free(p->imag.pixeli[i]);
+        }
+        free(p->imag.pixeli);
     }
-    for(int i = 0; i < p->nrLegi; i++)
-    { 
-        free(p->legi[i]);
-    }
-    free(p->legi);
-    for(int i = 0; i < p->imag.nrRanduri; i++)
-    { 
-        free(p->imag.pixeli[i]);
-    }
-    free(p->imag.pixeli);
     free(p);
+    return;
 }
 
 void copiaza_program(Runic* dest, Runic* source)
 { 
-    dest->input = source->input;
     dest->nrLegi = source->nrLegi;
     if(dest->legi == NULL)
     { 

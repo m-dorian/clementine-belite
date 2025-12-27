@@ -4,7 +4,6 @@
 #include "lege.h"
 #include "imagine.h"
 typedef struct runic { 
-    FILE* input;
     Imagine imag;
     char ultimaComanda[100];
     Lege** legi;

@@ -12,17 +12,12 @@ void lsystem(Runic* program, char fisierInput[100])
     }
     else 
     {   
-        if(program->input != NULL)
-        { 
-            fclose(program->input);
-        }
-        program->input = f;
         char axioma[100];
-        fgets(axioma, 100, program->input);
+        fgets(axioma, 100, f);
         axioma[strcspn(axioma, "\r\n")] = 0;
         strcpy(program->axioma, axioma);
         char temp[100];
-        fgets(temp, 100, program->input);
+        fgets(temp, 100, f);
         int nrLegi = strtol(temp, NULL, 10);
         printf("Loaded %s (L-system with %d rules)\n", fisierInput, nrLegi);
         program->nrLegi = nrLegi;
@@ -40,7 +35,7 @@ void lsystem(Runic* program, char fisierInput[100])
         for(int i = 0; i < nrLegi; i++)
         { 
             char buff[100];
-            fgets(buff, 100, program->input);
+            fgets(buff, 100, f);
             char* cuvant = strtok(buff, " \r\n");
             char c = cuvant[0];
             cuvant = strtok(NULL, " \r\n");
@@ -48,6 +43,7 @@ void lsystem(Runic* program, char fisierInput[100])
             program->legi[i] = l;
         }
     }
+    fclose(f);
     return;
 }
 
@@ -55,7 +51,7 @@ char* derive(int nrDerivari, Runic* program)
 {   
     char* str = (char*)malloc(sizeof(char) * 100);
     str[0] = '\0';
-    if(program->input == NULL)
+    if(program->nrLegi == 0)
     { 
         strcpy(str, "No L-system loaded");
         return str;
@@ -173,7 +169,7 @@ void turtle(Runic* program, int xInit, int yInit, int pasDeplasare, int orientar
         printf("No image loaded\n");
         return;
     }
-    char* deriv = derive(nrDerivari, program);
+    char* derivare = derive(nrDerivari, program);
     
 }
 
@@ -184,7 +180,7 @@ void undo(Runic* program)
     char* cuv = strtok(copie, " ");
     if(strcmp(cuv, "LSYSTEM") == 0)
     { 
-        program->input = NULL;
+      
     }
     else
     {
