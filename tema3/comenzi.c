@@ -21,9 +21,11 @@ void lsystem(Runic* program, char fisierInput[100])
         fgets(temp, 100, f);
         int nrLegi = strtol(temp, NULL, 10);
         printf("Loaded %s (L-system with %d rules)\n", fisierInput, nrLegi);
-        program->nrLegi = nrLegi;
         if(program->legi == NULL)
+        {
             program->legi = (Lege**)malloc(sizeof(Lege*) * nrLegi);
+            program->nrLegi = nrLegi;
+        }
         else 
         { 
             for(int i = 0; i < program->nrLegi; i++)
@@ -32,6 +34,7 @@ void lsystem(Runic* program, char fisierInput[100])
             }
             free(program->legi);
             program->legi = (Lege**)malloc(sizeof(Lege*) * nrLegi);
+            program->nrLegi = nrLegi;
         }
         for(int i = 0; i < nrLegi; i++)
         { 
@@ -166,9 +169,13 @@ void save(Runic* program, char numeImagine[100])
 
 void deseneaza_pixel(Runic* program, int x, int y, int r, int g, int b)
 {   
-    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].r = r;
-    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].g = g;
-    program->imag.pixeli[(program->imag.nrRanduri - 1) - y][x].b = b;
+    int rand = (program->imag.nrRanduri -1) - y;
+    int col = x;
+    if(rand >= program->imag.nrRanduri || col >= program->imag.nrColoane || rand < 0 || col < 0)
+        return;
+    program->imag.pixeli[rand][col].r = r;
+    program->imag.pixeli[rand][col].g = g;
+    program->imag.pixeli[rand][col].b = b;
 }
 void deseneaza_linie(Runic* program, int x0, int y0, int x1, int y1, int r, int g, int b)
 { 
@@ -227,7 +234,7 @@ void turtle(Runic* program, int xInit, int yInit, int pasDeplasare, int orientar
             { 
                 double xNou = (double)stareCurenta.x + (double)pasDeplasare * cos(stareCurenta.orientare * (acos(-1)/180.0));
                 double yNou = (double)stareCurenta.y + (double)pasDeplasare * sin(stareCurenta.orientare * (acos(-1)/180.0));
-                deseneaza_linie(program, (int)stareCurenta.x, (int)stareCurenta.y, (int)xNou, (int)yNou, r, g, b);
+                deseneaza_linie(program, (int)round(stareCurenta.x), (int)round(stareCurenta.y), (int)round(xNou), (int)round(yNou), r, g, b);
                 stareCurenta.x = xNou;
                 stareCurenta.y = yNou;
                 break;
